@@ -1,0 +1,15 @@
+spring:
+  kafka:
+    template:
+      default-topic: stock-events
+    producer:
+      bootstrap-servers: localhost:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      properties:
+        acks: all
+        retries: 10
+    admin:
+      properties:
+        bootstrap-servers: localhost:9092
+
