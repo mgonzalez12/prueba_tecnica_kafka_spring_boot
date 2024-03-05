@@ -10,7 +10,7 @@ public class AutoCreateConfig {
 
     @Bean
     public NewTopic searchTopic(){
-        return TopicBuilder.name("search_hotel")
+        return TopicBuilder.name("hotel_availability_searches")
                 .partitions(3)
                 .replicas(1)
                 .build();

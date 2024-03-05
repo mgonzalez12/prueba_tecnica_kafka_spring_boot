@@ -15,6 +15,8 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import com.mgonzalez.kafka_consumer_example.application.usecases.SearchEventsService;
 
+import java.util.Optional;
+
 @Service
 @Slf4j
 public class SearchEventsServiceImpl implements SearchEventsService {
@@ -32,31 +34,28 @@ public class SearchEventsServiceImpl implements SearchEventsService {
         FullSearchResponse stockEvent = objectMapper.readValue(consumerRecord.value(), FullSearchResponse.class);
         log.info("StockEvent recibido: {}", stockEvent);
 
-        if (stockEvent.getSearch().getHotelId() != null  && stockEvent.getSearch().getHotelId().isEmpty()) {
-            throw new RecoverableDataAccessException("Problema de red temporal");
-        }
+        Optional.ofNullable(stockEvent.getSearch())
+                .map(Search::getHotelId)
+                .filter(hotelId -> !hotelId.isEmpty())
+                .orElseThrow(() -> new RecoverableDataAccessException("Problema de red temporal"));
 
-        try{
-            save(stockEvent);
-        }catch (Exception ex){
-            log.info("Tipo de evento de stock no válido");
-        }
-
+        try { save(stockEvent);} catch (Exception ex) { log.info("Tipo de evento de stock no válido");}
     }
 
     @Transactional
     private void save(FullSearchResponse searchRequest) {
         log.info("Guardando StockEvent: {}", searchRequest);
-        Search search = new Search();
-        search.setSearchId(searchRequest.getSearchId());
-        search.setHotelId(searchRequest.getSearch().getHotelId());
-        search.setCheckIn(searchRequest.getSearch().getCheckIn());
-        search.setCheckOut(searchRequest.getSearch().getCheckOut());
-        search.setAges(searchRequest.getSearch().getAges());
-
-        log.info("Guardando StockEvent: {}", search);
-        searchRepository.save(search);
-        log.info("StockEvent se guardó correctamente: {}", search);
+        Optional.ofNullable(searchRequest.getSearch()).ifPresent(searchData -> {
+            Search search = new Search();
+            search.setSearchId(searchRequest.getSearchId());
+            search.setHotelId(searchData.getHotelId());
+            search.setCheckIn(searchData.getCheckIn());
+            search.setCheckOut(searchData.getCheckOut());
+            search.setAges(searchData.getAges());
+            log.info("Guardando StockEvent: {}", search);
+            searchRepository.save(search);
+            log.info("StockEvent se guardó correctamente: {}", search);
+        });
         log.info("StockEvent se guardó correctamente: {}", searchRequest);
     }
 }

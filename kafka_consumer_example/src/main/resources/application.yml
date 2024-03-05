@@ -3,7 +3,7 @@ server:
 spring:
   kafka:
     template:
-      default-topic: stock-events
+      default-topic: hotel_availability_searches
     consumer:
       bootstrap-servers: localhost:9092
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer

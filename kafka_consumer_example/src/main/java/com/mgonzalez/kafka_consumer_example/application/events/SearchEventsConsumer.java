@@ -14,7 +14,7 @@ public class SearchEventsConsumer {
     @Autowired
     private SearchEventsService stockEventsService;
 
-    @KafkaListener(topics = {"stock-events"})
+    @KafkaListener(topics = {"hotel_availability_searches"})
     public void onMessage(ConsumerRecord<Integer,String> consumerRecord){
         log.info("Est es el Evento Consumer Record: {}", consumerRecord);
         try {

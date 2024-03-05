@@ -9,11 +9,10 @@ import org.springframework.validation.BindingResult;
 
 import java.util.Map;
 import java.util.stream.Collectors;
-
 @Component
 public class Validations {
 
-    private ResponseEntity<?> validation(BindingResult result) {
+    public ResponseEntity<?> validation(BindingResult result) {
         if (result.hasErrors()) {
             Map<String, String> errors = result.getFieldErrors().stream()
                     .collect(Collectors.toMap(
@@ -22,7 +21,7 @@ public class Validations {
                     ));
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
         } else {
-            return ResponseEntity.status(HttpStatus.OK).build(); // Puedes cambiar esto a otro estado si lo deseas
+            return ResponseEntity.status(HttpStatus.OK).build();
         }
     }
 }
