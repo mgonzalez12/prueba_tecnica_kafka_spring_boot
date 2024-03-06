@@ -23,26 +23,15 @@ public class SearchEventProducer {
     ObjectMapper objectMapper;
 
     public SearchResponse sendSearchRequest(FullSearchResponse fullSearchRequest) throws JsonProcessingException {
-        String searchId = UUID.randomUUID().toString();
-        fullSearchRequest.setSearchId(searchId);
-
-        // Serializar el objeto FullSearchResponse a JSON
         String value = objectMapper.writeValueAsString(fullSearchRequest);
-
-        // Use CompletableFuture instead of ListenableFuture
         CompletableFuture<SendResult<String, String>> future = kafkaTemplate.sendDefault(fullSearchRequest.getSearch().getHotelId(), value);
-        // Add callbacks for handling success and failure
         future.whenComplete((result, throwable) -> {
             if (throwable != null) {
                 handleFailure(fullSearchRequest.getSearch().getHotelId(), fullSearchRequest, throwable);
-            } else {
-                // Handle success, e.g., log the message or offset
             }
         });
-
-        // Crear y retornar la respuesta con el searchId generado
         SearchResponse searchResponse = new SearchResponse();
-        searchResponse.setSearchId(searchId);
+        searchResponse.setSearchId(fullSearchRequest.getSearchId()); // Utiliza el ID existente
         return searchResponse;
     }
 

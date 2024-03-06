@@ -6,14 +6,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.UUID;
+
 @Entity
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 public class Search {
     @Id
     private String searchId;
-
     @Column(name = "hotelId")
     private String hotelId;
     @Column(name = "checkIn")
@@ -22,4 +22,8 @@ public class Search {
     private String checkOut;
     private List<Integer> ages;
     private int count;
+
+    public Search() {
+        this.searchId = UUID.randomUUID().toString();
+    }
 }

@@ -1,6 +1,7 @@
-package com.mgonzalez.kafka_consumer_example.application.events;
+package com.mgonzalez.kafka_consumer_example.application.consumer.events;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.mgonzalez.kafka_consumer_example.application.consumer.KafkaSearchConsumer;
 import com.mgonzalez.kafka_consumer_example.application.usecases.SearchEventsService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -12,7 +13,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 @Slf4j
 public class SearchEventsConsumer {
     @Autowired
-    private SearchEventsService stockEventsService;
+    private KafkaSearchConsumer stockEventsService;
 
     @KafkaListener(topics = {"hotel_availability_searches"})
     public void onMessage(ConsumerRecord<Integer,String> consumerRecord){

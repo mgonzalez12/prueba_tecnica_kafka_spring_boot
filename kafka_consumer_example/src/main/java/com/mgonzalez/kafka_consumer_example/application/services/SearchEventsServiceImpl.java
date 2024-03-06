@@ -22,40 +22,29 @@ import java.util.Optional;
 public class SearchEventsServiceImpl implements SearchEventsService {
     @Autowired
     ObjectMapper objectMapper;
-
     @Autowired
     KafkaTemplate<Integer, String> kafkaTemplate;
-
     @Autowired
     private SearchRepository searchRepository;
 
     @Override
-    public void processStockEvents(ConsumerRecord<Integer, String> consumerRecord) throws JsonProcessingException {
-        FullSearchResponse stockEvent = objectMapper.readValue(consumerRecord.value(), FullSearchResponse.class);
-        log.info("StockEvent recibido: {}", stockEvent);
-
-        Optional.ofNullable(stockEvent.getSearch())
-                .map(Search::getHotelId)
-                .filter(hotelId -> !hotelId.isEmpty())
-                .orElseThrow(() -> new RecoverableDataAccessException("Problema de red temporal"));
-
-        try { save(stockEvent);} catch (Exception ex) { log.info("Tipo de evento de stock no válido");}
-    }
-
     @Transactional
-    private void save(FullSearchResponse searchRequest) {
+    public FullSearchResponse guardar(FullSearchResponse searchRequest) {
         log.info("Guardando StockEvent: {}", searchRequest);
-        Optional.ofNullable(searchRequest.getSearch()).ifPresent(searchData -> {
-            Search search = new Search();
-            search.setSearchId(searchRequest.getSearchId());
-            search.setHotelId(searchData.getHotelId());
-            search.setCheckIn(searchData.getCheckIn());
-            search.setCheckOut(searchData.getCheckOut());
-            search.setAges(searchData.getAges());
-            log.info("Guardando StockEvent: {}", search);
-            searchRepository.save(search);
-            log.info("StockEvent se guardó correctamente: {}", search);
-        });
-        log.info("StockEvent se guardó correctamente: {}", searchRequest);
+        Optional.ofNullable(searchRequest.getSearch())
+                .map(searchData -> {
+                    Search search = new Search();
+                    search.setSearchId(searchRequest.getSearchId());
+                    search.setHotelId(searchData.getHotelId());
+                    search.setCheckIn(searchData.getCheckIn());
+                    search.setCheckOut(searchData.getCheckOut());
+                    search.setAges(searchData.getAges());
+                    log.info("Guardando StockEvent: {}", search);
+                    searchRepository.save(search);
+                    log.info("StockEvent se guardó correctamente: {}", search);
+                    return search;
+                })
+                .ifPresent(search -> log.info("StockEvent se guardó correctamente: {}", searchRequest));
+        return searchRequest;
     }
 }

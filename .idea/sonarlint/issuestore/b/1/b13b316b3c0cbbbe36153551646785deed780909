@@ -1,0 +1,10 @@
+
+g	java:S1120"FDefine and throw a dedicated exception instead of using a generic one.(Ò‚Òéüÿÿÿÿ8áúæ†á1
+_
+java:S6813"BRemove this field injection and use constructor injection instead.(êæÄŞ8Äêì„á1
+_
+java:S6813"BRemove this field injection and use constructor injection instead.(êæÄŞ8Äêì„á1
+_
+java:S6813"BRemove this field injection and use constructor injection instead.(êæÄŞ8Äêì„á1
+©
+java:S1130"‹Remove the declaration of thrown exception 'com.fasterxml.jackson.core.JsonProcessingException', as it cannot be thrown from method's body.(’ˆÊí8„Àæ†á1
