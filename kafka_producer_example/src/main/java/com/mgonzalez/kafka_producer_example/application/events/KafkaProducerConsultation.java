@@ -22,11 +22,11 @@ public class KafkaProducerConsultation {
 
     private final ConcurrentHashMap<String, CompletableFuture<String>> futures = new ConcurrentHashMap<>();
 
-    public CompletableFuture<String> send(String topic, String payload) {
+    public CompletableFuture<String> send(String topic, String searchId) {
         CompletableFuture<String> future = new CompletableFuture<>();
-        futures.put(payload, future);
-        kafkaTemplate.send(topic, payload);
-        log.info("Envios desde payload : {}", payload);
+        futures.put(searchId, future);
+        kafkaTemplate.send(topic, searchId);
+        log.info("Envios desde payload : {}", searchId);
         return future;
     }
 
@@ -35,6 +35,7 @@ public class KafkaProducerConsultation {
         // Aquí necesitarías extraer el searchId del mensaje
         String searchId = extractSearchIdFromMessage(message);
         CompletableFuture<String> future = futures.remove(searchId);
+        log.info("Future - Respuesta desde consumer : {}", future);
         if (future != null) {
             log.info("Respuesta desde consumer : {}", message);
             future.complete(message);

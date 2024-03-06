@@ -3,6 +3,7 @@ package com.mgonzalez.kafka_producer_example.infrastructure.rest.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mgonzalez.kafka_producer_example.application.events.KafkaProducerConsultation;
 import com.mgonzalez.kafka_producer_example.application.events.SearchEventProducer;
+import com.mgonzalez.kafka_producer_example.domian.constant.SearchIdValidator;
 import com.mgonzalez.kafka_producer_example.domian.constant.Validations;
 import com.mgonzalez.kafka_producer_example.domian.dto.FullSearchResponse;
 import com.mgonzalez.kafka_producer_example.domian.dto.SearchRequest;
@@ -16,6 +17,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutionException;
 
 @RestController
@@ -43,13 +45,24 @@ public class SearchEventsController {
         return ResponseEntity.status(HttpStatus.CREATED).body(searchResponse);
     }
     @GetMapping("/count")
-    public ResponseEntity<String> count(@RequestParam String searchId) throws ExecutionException, InterruptedException {
-        // Envía el searchId al topic "requests" de Kafka y obtén un CompletableFuture
-        CompletableFuture<String> future = kafkaProducerConsultation.send("requests", searchId);
-        log.info("Kafka Producer response : {}", future.get());
-        // Espera a que el CompletableFuture se complete y obtén la respuesta
-        String response = future.get();
-        // Devuelve la respuesta al cliente
-        return ResponseEntity.ok(response);
+    public ResponseEntity<String> count(@RequestParam String searchId) {
+        try {
+            // Valida el searchId antes de enviarlo
+            SearchIdValidator.validate(searchId);
+            // Envía el searchId al topic "requests" de Kafka y obtén un CompletableFuture
+            CompletableFuture<String> future = kafkaProducerConsultation.send("requests", searchId);
+            // Espera a que el CompletableFuture se complete y obtén la respuesta
+            return CompletableFuture.supplyAsync(() -> {
+                try { return future.get();}
+                catch (InterruptedException | ExecutionException e) { throw new CompletionException(e); }
+            }).thenApply(ResponseEntity::ok).get();
+        } catch (IllegalArgumentException e) {
+            // Maneja la excepción y devuelve un mensaje de error
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (CompletionException e) {
+            // Maneja otras excepciones aquí si es necesario
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al procesar la solicitud");
+        } catch (ExecutionException e) { throw new RuntimeException(e); }
+        catch (InterruptedException e) { throw new RuntimeException(e);}
     }
 }

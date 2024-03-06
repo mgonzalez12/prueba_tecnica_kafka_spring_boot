@@ -820,3 +820,13 @@ w
 G.idea/sonarlint/issuestore/a/5/a51f64043693de0d84ab7b6b330ff91f9c09826f,9/3/930845b8388cfbebb9523fcb37fb0a71aebaea76
 Å
 Q.idea/sonarlint/securityhotspotstore/b/1/b13b316b3c0cbbbe36153551646785deed780909,9/c/9cdc68eb68c52d99fa512bec44b251d67e53d90d
+†
+pkafka_producer_example/src/main/java/com/mgonzalez/kafka_producer_example/domian/constant/SearchIdValidator.java,a/1/a17fbd7558e415433eaa337e82667bc1d1ca6717
+¨
+|kafka_producer_example/src/main/java/com/mgonzalez/kafka_producer_example/infrastructure/rest/advice/MyControllerAdvice.java,4/a/4adb284eac0bc6ed2beca0d6c9e0b83be2961375
+±
+Äkafka_producer_example/src/main/java/com/mgonzalez/kafka_producer_example/infrastructure/adapter/exceptions/SearchException.java,f/8/f8a3c8d4dea3cae6e7856f2453f061f5a78e7e11
+≥
+Çkafka_consumer_example/src/main/java/com/mgonzalez/kafka_consumer_example/insfrastruture/adapter/exceptions/SearchIdValidator.java,1/c/1c3b8df9172ed5700aaeb8718d13e1f8ac1da966
+ª
+äkafka_consumer_example/src/main/java/com/mgonzalez/kafka_consumer_example/insfrastruture/adapter/exceptions/SearchIdNotFoundException.java,5/8/588cbd29dfbf29c78ccb1f93bc5720be9df683ea

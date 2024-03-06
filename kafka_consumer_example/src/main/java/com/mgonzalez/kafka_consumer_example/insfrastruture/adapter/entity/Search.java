@@ -26,4 +26,5 @@ public class Search {
     public Search() {
         this.searchId = UUID.randomUUID().toString();
     }
+
 }
